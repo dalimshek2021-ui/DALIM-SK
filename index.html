@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dalim sk | Level 8 System Architect | 3D Core</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --slate-bg: #111827; 
+            --slate-panel: #1f2937;
+            --toxic-green: #10b981;
+            --amber: #f59e0b;
+        }
+
+        body {
+            background-color: var(--slate-bg);
+            color: #d1d5db;
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+        }
+
+        /* CRT Overlay Scanlines */
+        .crt::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
+            z-index: 9999; background-size: 100% 3px, 3px 100%; pointer-events: none;
+        }
+
+        .text-neon { color: var(--toxic-green); text-shadow: 0 0 10px var(--toxic-green); }
+        .border-neon { border: 1px solid var(--toxic-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+
+        /* 3D GLOBE AREA */
+        #globe-canvas { width: 100%; height: 400px; cursor: grab; outline: none; }
+
+        /* 3D SDLC CUBE ENGINE */
+        .cube-container { perspective: 1000px; width: 220px; height: 220px; margin: 50px auto; }
+        .cube {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d; animation: rotateCube 20s infinite linear;
+        }
+        .cube-face {
+            position: absolute; width: 220px; height: 220px;
+            border: 2px solid var(--toxic-green); background: rgba(16, 185, 129, 0.1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: bold; text-align: center; color: white;
+            backface-visibility: visible; backdrop-filter: blur(5px);
+        }
+        .front  { transform: translateZ(110px); }
+        .back   { transform: rotateY(180deg) translateZ(110px); }
+        .right  { transform: rotateY(90deg) translateZ(110px); }
+        .left   { transform: rotateY(-90deg) translateZ(110px); }
+        .top    { transform: rotateX(90deg) translateZ(110px); }
+        .bottom { transform: rotateX(-90deg) translateZ(110px); }
+
+        @keyframes rotateCube {
+            from { transform: rotateX(0deg) rotateY(0deg); }
+            to { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        /* IDE Console Styling */
+        .ide-tab { 
+            @apply flex items-center gap-2 px-4 py-2 text-[10px] text-gray-500 cursor-pointer transition-all border-b border-transparent;
+            background: #111827;
+        }
+        .ide-tab.active { 
+            background: #1f2937; color: var(--toxic-green); border-bottom: 2px solid var(--toxic-green);
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--toxic-green); }
+    </style>
+</head>
+<body class="crt p-2 md:p-6">
+
+    <!-- GLOBAL HUD (STATUS BAR) -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-[#111827]/90 backdrop-blur-md border-b border-emerald-500/20 px-6 py-2 flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+        <div class="flex items-center gap-6">
+            <span class="text-neon tracking-tighter">DALIM_SK_TERMINAL_v8.4</span>
+            <span class="text-amber-500 hidden sm:block italic">SIGNAL: <span id="user-geo">UPLINKING...</span></span>
+        </div>
+        <div class="flex gap-6">
+            <span id="sys-clock">00:00:00</span>
+            <a href="https://www.linkedin.com/in/dalimsk" target="_blank" class="text-neon hover:scale-110 transition"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="mt-20 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+        <div class="p-8 border-neon rounded bg-emerald-500/5" data-aos="fade-right">
+            <div class="flex items-center gap-6 mb-8">
+                <div class="relative">
+                    <img src="https://media.licdn.com/dms/image/v2/C4D03AQGs1CByD-M9tQ/profile-displayphoto-shrink_800_800/0/1659976722305?e=1743638400&v=beta&t=O0fBvjP-N89B_iNOf8hFm3eD0I7fWpT5_m2o9wI33iY" 
+                         class="w-20 h-20 rounded border border-emerald-500 p-1 grayscale saturate-200" alt="DS">
+                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 rounded-full border-4 border-slate-900 animate-pulse"></div>
+                </div>
+                <div>
+                    <h1 class="text-5xl md:text-7xl font-black text-neon tracking-tighter leading-none uppercase">Dalim Sk</h1>
+                    <p class="text-amber-500 text-xs mt-2 uppercase tracking-[0.4em]">Senior Architect // Core Node</p>
+                </div>
+            </div>
+            <div class="space-y-3 text-xs md:text-sm text-gray-400 mb-10">
+                <p>> Mission Status: <span class="text-green-500 font-bold">ACTIVE_DEPLOYMENT</span></p>
+                <p>> Professional Rank: <span class="text-white">8 YEARS EXPERIENCE</span></p>
+                <p>> Current Command: <span class="text-amber-500 italic">IBM India Pvt Ltd</span></p>
+            </div>
+            <div class="flex flex-wrap gap-4">
+                <a href="mailto:dalimsk@gmail.com" class="bg-emerald-600 text-black px-8 py-3 font-bold uppercase text-xs hover:bg-emerald-400 transition transform active:scale-95">Establish_Uplink</a>
+                <a href="tel:+919733305179" class="border border-emerald-500/50 text-emerald-500 px-8 py-3 font-bold uppercase text-xs hover:bg-emerald-500/10 transition flex items-center gap-3">
+                    <i class="fa-solid fa-satellite"></i> +91-9733305179
+                </a>
+            </div>
+        </div>
+
+        <!-- 3D SATELLITE GLOBE -->
+        <div class="relative flex flex-col items-center justify-center p-4 bg-emerald-500/5 rounded-3xl border border-emerald-500/10" data-aos="zoom-in">
+            <canvas id="globe-canvas"></canvas>
+            <div class="absolute bottom-10 text-center pointer-events-none">
+                <h4 class="text-neon text-lg font-bold tracking-widest uppercase italic">HQ: Kolkata Sector</h4>
+                <p class="text-[9px] text-gray-500 uppercase mt-1">Real-Time Satellite Image v8.4</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D SDLC CUBE SECTION -->
+    <section class="py-24 max-w-7xl mx-auto px-4">
+        <h2 class="text-center text-xl font-bold mb-10 uppercase tracking-[0.5em] text-neon italic underline decoration-emerald-500/30 underline-offset-[15px]">3D_Lifecycle_Engine</h2>
+        <div class="flex flex-col lg:flex-row items-center gap-20">
+            <div class="lg:w-1/2 cube-container" data-aos="zoom-in">
+                <div class="cube">
+                    <div class="cube-face front">
+                        <i class="fa-solid fa-file-invoice text-3xl mb-2 text-emerald-400"></i>
+                        01.REQUIREMENT
+                    </div>
+                    <div class="cube-face back">
+                        <i class="fa-solid fa-brain text-3xl mb-2 text-amber-500"></i>
+                        02.ANALYSIS
+                    </div>
+                    <div class="cube-face right">
+                        <i class="fa-solid fa-drafting-compass text-3xl mb-2 text-white"></i>
+                        03.DESIGN
+                    </div>
+                    <div class="cube-face left">
+                        <i class="fa-solid fa-code text-3xl mb-2 text-emerald-400"></i>
+                        04.DEVELOPMENT
+                    </div>
+                    <div class="cube-face top">
+                        <i class="fa-solid fa-vial text-3xl mb-2 text-amber-500"></i>
+                        05.TESTING
+                    </div>
+                    <div class="cube-face bottom">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl mb-2 text-white"></i>
+                        06.DEPLOYMENT
+                    </div>
+                </div>
+            </div>
+            <div class="lg:w-1/2 space-y-6" data-aos="fade-left">
+                <h3 class="text-2xl font-bold text-white uppercase tracking-widest border-b-2 border-emerald-500 w-fit pb-2">Industrial Specs</h3>
+                <p class="text-gray-400 text-sm leading-relaxed italic">> <span class="text-white">Enterprise Design:</span> High-concurrency J2EE architecting.</p>
+                <p class="text-gray-400 text-sm leading-relaxed italic">> <span class="text-white">App Design:</span> Hybrid mobile solutions with <span class="text-amber-500">Ionic Framework</span>.</p>
+                <p class="text-gray-400 text-sm leading-relaxed italic">> <span class="text-white">Website Design:</span> Reactive enterprise dashboards using <span class="text-emerald-500">Angular</span>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- IDE CODE TERMINAL -->
+    <section class="py-10 max-w-7xl mx-auto px-4">
+        <h2 class="text-neon text-sm font-bold uppercase mb-4 tracking-[0.5em]">// Source_Code_Arsenal</h2>
+        <div class="bg-[#1f2937] border border-emerald-500/20 rounded flex flex-col md:flex-row min-h-[550px]">
+            <div class="md:w-64 border-r border-white/5 bg-[#111827]">
+                <div class="p-3 text-[10px] text-gray-500 uppercase font-bold border-b border-white/5">Explorer</div>
+                <div onclick="setIDE(0)" class="ide-tab active" id="tab0"><i class="fa-solid fa-file-code text-orange-400"></i> KafkaRelay.java</div>
+                <div onclick="setIDE(1)" class="ide-tab" id="tab1"><i class="fa-solid fa-file-code text-orange-400"></i> Microservice.java</div>
+                <div onclick="setIDE(2)" class="ide-tab" id="tab2"><i class="fa-solid fa-shield-halved text-blue-400"></i> AuthGuard.ts</div>
+                <div onclick="setIDE(3)" class="ide-tab" id="tab3"><i class="fa-solid fa-file-code text-blue-400"></i> CoreService.ts</div>
+                <div onclick="setIDE(4)" class="ide-tab" id="tab4"><i class="fa-solid fa-database text-purple-400"></i> AuditTrail.sql</div>
+                <div onclick="setIDE(5)" class="ide-tab" id="tab5"><i class="fa-solid fa-database text-purple-400"></i> StoredProc.sql</div>
+                <div onclick="setIDE(6)" class="ide-tab" id="tab6"><i class="fa-brands fa-js text-yellow-400"></i> Handshake.js</div>
+                <div onclick="setIDE(7)" class="ide-tab" id="tab7"><i class="fa-solid fa-file-code text-red-400"></i> Dashboard.html</div>
+                <div onclick="setIDE(8)" class="ide-tab" id="tab8"><i class="fa-solid fa-gear text-gray-400"></i> Dockerfile.yml</div>
+                <div onclick="setIDE(9)" class="ide-tab" id="tab9"><i class="fa-solid fa-file-code text-orange-400"></i> UserRepo.java</div>
+            </div>
+            <div class="flex-grow bg-black/30 p-6 md:p-10 font-mono text-xs md:text-sm overflow-x-auto leading-relaxed">
+                <pre id="ide-output" class="text-emerald-400"></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- FULL MISSION HISTORY (INCLUDING HINNOVATION) -->
+    <section id="experience" class="py-24 max-w-5xl mx-auto px-4">
+        <h2 class="text-xl font-bold mb-16 text-neon uppercase tracking-[0.4em] text-center italic border-l-4 border-emerald-500 pl-6">Mission_History_Log</h2>
+        <div class="space-y-12">
+            <!-- IBM -->
+            <div class="p-8 border border-emerald-500/20 bg-emerald-500/5 border-l-4 border-l-emerald-500" data-aos="fade-left">
+                <h3 class="text-2xl font-bold text-white tracking-widest uppercase">IBM INDIA PVT LTD</h3>
+                <p class="text-neon text-[10px] uppercase mb-4 tracking-widest font-bold">Senior Software Developer // 2022 — PRESENT</p>
+                <p class="text-gray-400 text-sm italic">Handling system analysis and J2EE architecture for global banking. Optimization specialist for Oracle WebLogic.</p>
+            </div>
+            <!-- TCS -->
+            <div class="p-8 border border-emerald-500/20 bg-emerald-500/5 border-l-4 border-l-amber-500" data-aos="fade-left" data-aos-delay="100">
+                <h3 class="text-2xl font-bold text-white tracking-widest uppercase">TCS</h3>
+                <p class="text-amber-500 text-[10px] uppercase mb-4 tracking-widest font-bold">IT Analyst // 2020 — 2022</p>
+                <p class="text-gray-400 text-sm">Strategic lead for US Banking domain. Managed Kafka migrations and Angular front-end architectures.</p>
+            </div>
+            <!-- IDC -->
+            <div class="p-8 border border-emerald-500/20 bg-emerald-500/5 border-l-4 border-l-gray-600" data-aos="fade-left" data-aos-delay="200">
+                <h3 class="text-2xl font-bold text-white tracking-widest uppercase italic">IDC TECHNOLOGIES</h3>
+                <p class="text-gray-500 text-[10px] uppercase mb-4 tracking-widest font-bold">Software Engineer // 2018 — 2020</p>
+                <p class="text-gray-400 text-sm">Engineered material management systems and healthcare modules (HMS Parivartan) for Tata Steel.</p>
+            </div>
+            <!-- HINNOVATION (THE MISSED ONE) -->
+            <div class="p-8 border border-emerald-500/20 bg-emerald-500/5 border-l-4 border-l-gray-600 opacity-60" data-aos="fade-left" data-aos-delay="300">
+                <h3 class="text-2xl font-bold text-white tracking-widest uppercase italic">HINNOVATION RESEARCH</h3>
+                <p class="text-gray-500 text-[10px] uppercase mb-4 tracking-widest font-bold">Software Engineer // 2016 — 2018</p>
+                <p class="text-gray-400 text-sm">Developed ERP solutions for Shikshayatan College and automated recruitment engines for North Bengal University.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACADEMICS -->
+    <section class="py-24 max-w-4xl mx-auto px-4">
+        <h2 class="text-center text-xl font-bold mb-12 uppercase text-neon tracking-widest">Academic_Credentials</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="p-6 border border-emerald-500/20 bg-emerald-500/5 rounded flex justify-between items-center" data-aos="fade-up">
+                <div class="text-left">
+                    <h4 class="text-white font-bold text-sm">B.Tech (CSE)</h4>
+                    <p class="text-[10px] text-gray-500 uppercase">MAKAUT (WBUT) | 2016</p>
+                </div>
+                <span class="text-[9px] font-black text-neon border border-emerald-500 px-3 py-1 rounded">VERIFIED</span>
+            </div>
+            <div class="p-6 border border-emerald-500/20 bg-emerald-500/5 rounded flex justify-between items-center opacity-60" data-aos="fade-up">
+                <div class="text-left">
+                    <h4 class="text-white font-bold text-sm">Higher Secondary</h4>
+                    <p class="text-[10px] text-gray-500 uppercase">WBCHSE | 2012</p>
+                </div>
+                <span class="text-[9px] font-bold text-gray-500 border border-white/10 px-3 py-1 rounded">ARCHIVED</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-white/5 text-center text-gray-700 uppercase">
+        <p class="text-[9px] font-bold tracking-[0.6em]">&copy; <span id="year"></span> DALIM SK. ARCHITECTING SECURE SYSTEMS.</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: false });
+        document.getElementById('year').innerText = new Date().getFullYear();
+        setInterval(() => document.getElementById('sys-clock').innerText = new Date().toLocaleTimeString(), 1000);
+
+        // Geolocation Capture
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                document.getElementById('user-geo').innerText = `[${pos.coords.latitude.toFixed(4)}N, ${pos.coords.longitude.toFixed(4)}E]`;
+            }, () => document.getElementById('user-geo').innerText = "BLOCKED");
+        }
+
+        // 3D Satellite Globe
+        const scene = new THREE.Scene();
+        const canvas = document.getElementById('globe-canvas');
+        const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        
+        const loader = new THREE.TextureLoader();
+        const texture = loader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+        const globe = new THREE.Mesh(new THREE.SphereGeometry(5, 64, 64), new THREE.MeshPhongMaterial({ map: texture }));
+        scene.add(globe);
+
+        // Kolkata Pin
+        const phi = (90 - 22.57) * (Math.PI / 180), theta = (88.36 + 180) * (Math.PI / 180);
+        const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), new THREE.MeshBasicMaterial({ color: 0x10b981 }));
+        beacon.position.set(-(5.05 * Math.sin(phi) * Math.cos(theta)), (5.05 * Math.cos(phi)), (5.05 * Math.sin(phi) * Math.sin(theta)));
+        scene.add(beacon);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1); light.position.set(5, 3, 5); scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+        camera.position.z = 15;
+        globe.rotation.y = 4.2;
+
+        function animateGlobe() { requestAnimationFrame(animateGlobe); globe.rotation.y += 0.002; beacon.rotation.y += 0.002; renderer.render(scene, camera); }
+        animateGlobe();
+
+        // IDE Content
+        const codes = [
+            `@Service\npublic class KafkaRelay {\n  @Autowired private KafkaTemplate<String, String> template;\n  public void execute(String msg) {\n    this.template.send("SECURITY_CORE", msg);\n    LOG.info("Payload_Transmitted_Successfully");\n  }\n}`,
+            `@SpringBootApplication\n@EnableEurekaClient\npublic class CoreArchitect {\n  public static void main(String[] args) {\n    SpringApplication.run(CoreArchitect.class, args);\n  }\n}`,
+            `@Injectable({ providedIn: 'root' })\nexport class AuthGuard implements CanActivate {\n  canActivate(): boolean {\n    return this.auth.isDecrypted();\n  }\n}`,
+            `export class DataService {\n  fetchNodes(): Observable<Node[]> {\n    return this.http.get<Node[]>('/api/v1/uplink');\n  }\n}`,
+            `SELECT u.username, p.access_level\nFROM users u\nJOIN permissions p ON u.id = p.user_id\nWHERE u.status = 'ACTIVE';`,
+            `CREATE PROCEDURE AuditLog(IN user_id INT)\nBEGIN\n  UPDATE system_logs SET audited = TRUE\n  WHERE user_id = user_id;\nEND;`,
+            `const authenticate = async (token) => {\n  const res = await fetch('/api/v8/uplink', { method: 'POST' });\n  return res.json();\n};`,
+            `<section class="grid grid-cols-1 md:grid-cols-3 gap-6">\n  <div class="panel border-neon">\n    <h4 class="text-neon">System_Active</h4>\n  </div>\n</section>`,
+            `apiVersion: v1\nkind: Deployment\nmetadata: name: microservice-uplink\nspec: replicas: 3`,
+            `@Entity\n@Table(name = "mission_logs")\npublic class Mission {\n  @Id @GeneratedValue\n  private Long id;\n  private String status;\n}`
+        ];
+
+        function setIDE(idx) {
+            document.getElementById('ide-output').textContent = codes[idx];
+            document.querySelectorAll('.ide-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab' + idx).classList.add('active');
+        }
+        setIDE(0);
+    </script>
+</body>
+</html>
